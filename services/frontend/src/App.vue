@@ -1,8 +1,6 @@
 <template>
-  <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center"></div>
-    </v-app-bar>
+  <v-app style="background-color: #b2b1bc">
+    <Header />
     <v-main>
       <router-view />
     </v-main>
@@ -10,11 +8,12 @@
 </template>
 
 <script>
+import Header from "./components/Header.vue";
 export default {
   name: "App",
-
   data: () => ({
     //
   }),
+  components: { Header },
 };
 </script>
