@@ -1,14 +1,17 @@
 <template>
   <v-app-bar app color="primary">
     <v-toolbar-title class="white--text font-weight-bold">
-      TESTE 4
+      TESTE 4 - API
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <h1 class="terciary--text">MARIA LUÍSA</h1>
-    <v-spacer></v-spacer>
-    <a :href="url">
-      <v-icon x-large color="white"> mdi-github </v-icon>
-    </a>
+    <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+        <a :href="url" v-bind="attrs" v-on="on">
+          <v-icon x-large color="white"> mdi-github </v-icon>
+        </a>
+      </template>
+      <span>Ir para o repositório da aplicação</span>
+    </v-tooltip>
   </v-app-bar>
 </template>
 
