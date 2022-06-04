@@ -7,17 +7,49 @@
       :item="currentItem"
     />
     <Tip />
+    <div
+      class="d-flex mx-6"
+      v-bind:class="page == 1 ? 'justify-end' : 'justify-space-between'"
+    >
+      <v-btn v-if="page != 1" @click="prevPage" color="primary">
+        <v-icon left> mdi-arrow-left </v-icon>
+        Anterior
+      </v-btn>
+      <v-btn @click="nextPage" color="primary">
+        Próximo
+        <v-icon right> mdi-arrow-right </v-icon>
+      </v-btn>
+    </div>
     <v-card class="rounded elevation-5 my-5 mx-5">
       <v-card-title>
-        RELATÓRIO CADOP
+        <p class="primary--text font-weight-black">RELATÓRIO CADOP</p>
         <v-spacer />
-        <v-text-field v-model="search" label="Buscar" class="mx-4" />
+        <div class="d-flex justify-end">
+          <v-text-field
+            v-model="search"
+            label="Buscar"
+            :append-icon="'mdi-magnify'"
+            :append-outer-icon="search ? 'mdi-close' : ''"
+            @click:append="searchValues"
+            @click:append-outer="cleanSearch"
+            @keyup.enter="searchValues"
+            color="primary"
+            class="mx-4"
+          />
+          <v-autocomplete
+            v-model="filter"
+            :items="filters"
+            clearable
+            placeholder="Escolha um Filtro"
+            @keyup.enter="searchValues"
+          ></v-autocomplete>
+        </div>
       </v-card-title>
 
       <v-data-table
         :headers="headers"
-        :items="dummyData"
-        :items-per-page="5"
+        :items="values"
+        :items-per-page="10"
         :loading="loading"
         loading-text="Carregando..."
         disable-sort
@@ -29,7 +61,7 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-icon
-                color="secondary"
+                color="icon"
                 v-bind="attrs"
                 v-on="on"
                 class="ml-2"
@@ -56,34 +88,14 @@ export default {
   data() {
     return {
       loading: true,
-      search: "",
+      search: null,
       headers: [],
       seeMoreDialog: false,
       currentItem: {},
-      dummyData: [
-        {
-          registro_ans: "418374",
-          cnpj: "1,18281E+13",
-          razao_social:
-            "CAIXA DE ASSISTÊNCIA DO SETOR DE ENERGIA -EVIDA -ASSISTÊNCIA À SAÚDE",
-          nome_fantasia: "E-VIDA",
-          modalidade: "Autogestão",
-          logradouro: "SETOR DE HABITAÇÕES COLETIVAS GEMINADAS",
-          numero: "QUADRA 704/705",
-          complemento: "BLOCO C, LOJA 48",
-          bairro: "ASA NORTE",
-          cidade: "Brasília",
-          uf: "DF",
-          cep: "70730630",
-          ddd: "61",
-          telefone: "39668300",
-          fax: "39668302",
-          endereco_eletronico: "governanca@evida.org.br",
-          representante: "ELI PINTO DE MELO JUNIOR",
-          cargo: "PRESIDENTE",
-          data: "12/01/2012",
-        },
-      ],
+      values: [],
+      page: 1,
+      filters: ["registro", "cnpj", "nome_fantasia", "representante"],
+      filter: null,
     };
   },
   cadopService: null,
@@ -91,8 +103,11 @@ export default {
     this.cadopService = new CadOP();
   },
   mounted() {
+    this.cadopService
+      .getOperadoras()
+      .then((data) => (this.values = data))
+      .then(() => (this.loading = false));
     this.headers = this.cadopService.getHeaders();
-    this.loading = false;
   },
   methods: {
     seeMore(item) {
@@ -101,6 +116,31 @@ export default {
     },
     closeDialog() {
       this.seeMoreDialog = false;
+    },
+    nextPage() {
+      this.page = this.page + 1;
+      this.cadopService
+        .getOperadoras(this.page, this.filter, this.search)
+        .then((data) => (this.values = data))
+        .then(() => (this.loading = false));
+    },
+    prevPage() {
+      this.page = this.page - 1;
+      this.cadopService
+        .getOperadoras(this.page, this.filter, this.search)
+        .then((data) => (this.values = data))
+        .then(() => (this.loading = false));
+    },
+    searchValues() {
+      this.loading = true;
+      this.page = 1;
+      this.cadopService
+        .getOperadoras(this.page, this.filter, this.search)
+        .then((data) => (this.values = data))
+        .then(() => (this.loading = false));
+    },
+    cleanSearch() {
+      location.reload();
     },
   },
   components: { SeeMoreModal, Tip },
