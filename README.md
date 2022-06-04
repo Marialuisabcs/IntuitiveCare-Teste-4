@@ -33,7 +33,7 @@ necessário a instalação de um interpretador corente.
    pip install -r requirements.txt
    ```
 
-4. Após a instalação de todas as dependências, execute:
+4. Após a instalação de todas as dependências, execute o seguinte comando estando no caminho services/backend/src:
 
    ```
    uvicorn main:app --reload
