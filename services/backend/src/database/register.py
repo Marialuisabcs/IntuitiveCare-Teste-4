@@ -1,5 +1,7 @@
 from database.database import db
 from database.models import RelacaoOperadoras
+from database.util import get_values
+import os
 
 
 def create_tables():
@@ -7,15 +9,19 @@ def create_tables():
     print("CREATED")
 
 
-def insert_data(file):
+def insert_data():
     data_count = get_data()
     if data_count != 0:
         print(f"{data_count} rows already inserted")
         return
 
-    with open(file, "r") as sql:
-        query = sql.read()
-    db.execute_sql(query)
+    print(os.getcwd())
+
+    list_of_values = get_values("static/relatorio_cadop teste 4.csv")
+    field_names = list(RelacaoOperadoras._meta.fields.keys())[1:]
+
+    with db.atomic():
+        RelacaoOperadoras.insert_many(list_of_values, fields=field_names).execute()
 
 
 def get_data():
@@ -26,13 +32,11 @@ def get_data():
 def register(app) -> None:
     @app.on_event("startup")
     async def startup_event():
-        # RelacaoOperadoras.drop_table()
         db.connect()
         create_tables()
-        insert_data("static\insert_operadoras.sql")
+        insert_data()
         db.close()
 
     @app.on_event("shutdown")
     def shutdown_event():
-        # RelacaoOperadoras.drop_table()
         print("SHUTT DOWN")
