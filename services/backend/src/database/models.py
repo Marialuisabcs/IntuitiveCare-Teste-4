@@ -23,7 +23,7 @@ class RelacaoOperadoras(Model):
     endereco_eletronico = CharField(max_length=255, null=True)
     representante = CharField(max_length=255)
     cargo = CharField(max_length=255)
-    data = DateTimeField()
+    data = DateField()
 
     class Meta:
         database = db
