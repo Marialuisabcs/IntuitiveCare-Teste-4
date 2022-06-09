@@ -1,4 +1,6 @@
 from contextvars import ContextVar
+from decouple import config
+from urllib.parse import urlparse
 import peewee
 
 db_state_default = {"closed": None, "conn": None, "ctx": None, "transactions": None}
@@ -20,8 +22,22 @@ class PeeweeConnectionState(peewee._ConnectionState):
         return self._state.get()[name]
 
 
-db = peewee.PostgresqlDatabase(
-    "postgres", user="postgres", password="postgres", host="127.0.0.1", port=5432
-)
+def change_scheme(db_url: str):
+    """Changes prefix 'postgres' to 'postgresql' for Peewee acceptance
+
+    Args:
+        db_url (str): database url to be changed
+
+    Returns:
+       db_url_updated (str): database url with 'postgresql' prefix replaced
+    """
+    db_url_parsed = urlparse(db_url)
+    db_url_updated = db_url_parsed._replace(scheme="postgresql").geturl()
+    return db_url_updated
+
+
+database_url = change_scheme(config("DATABASE_URL"))
+
+db = peewee.PostgresqlDatabase(database_url)
 
 db._state = PeeweeConnectionState()
