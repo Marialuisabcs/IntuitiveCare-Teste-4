@@ -1,22 +1,16 @@
 export default class CadOP {
   async getOperadoras(page = 1, filter = null, query = null) {
+    const base_url = "https://intuitive-care-back.herokuapp.com/";
     if (filter != null) {
       const res = await fetch(
-        "https://intuitive-care-back.herokuapp.com/?page=" +
-          page +
-          "&filterBy=" +
-          filter +
-          "&query=" +
-          query
+        base_url + "?page=" + page + "&filterBy=" + filter + "&query=" + query
       ).catch((error) => {
         return error;
       });
       const data = await res.json();
       return data;
     }
-    const res = await fetch(
-      "https://intuitive-care-back.herokuapp.com/?page=" + page
-    ).catch((error) => {
+    const res = await fetch(base_url + "?page=" + page).catch((error) => {
       return error;
     });
     const data = await res.json();
