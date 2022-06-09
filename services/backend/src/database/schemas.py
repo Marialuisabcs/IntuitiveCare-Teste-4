@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from pydantic import BaseModel
 from typing import Any
 from pydantic.utils import GetterDict
@@ -33,7 +33,7 @@ class RelacaoOperadorasBase(BaseModel):
     endereco_eletronico: Optional[str]
     representante: str
     cargo: str
-    data: datetime
+    data: date
 
 
 class RelacaoOperadoras(RelacaoOperadorasBase):
@@ -56,7 +56,7 @@ class RelacaoOperadoras(RelacaoOperadorasBase):
     endereco_eletronico: Optional[str]
     representante: str
     cargo: str
-    data: datetime
+    data: date
 
     class Config:
         orm_mode = True
