@@ -2,7 +2,7 @@ export default class CadOP {
   async getOperadoras(page = 1, filter = null, query = null) {
     if (filter != null) {
       const res = await fetch(
-        "http://127.0.0.1:8000/?page=" +
+        "https://intuitive-care-back.herokuapp.com/?page=" +
           page +
           "&filterBy=" +
           filter +
@@ -14,11 +14,11 @@ export default class CadOP {
       const data = await res.json();
       return data;
     }
-    const res = await fetch("http://127.0.0.1:8000/?page=" + page).catch(
-      (error) => {
-        return error;
-      }
-    );
+    const res = await fetch(
+      "https://intuitive-care-back.herokuapp.com/?page=" + page
+    ).catch((error) => {
+      return error;
+    });
     const data = await res.json();
     return data;
   }
